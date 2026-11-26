@@ -2,8 +2,7 @@
     "required": true,
     "minVersion": "0.8",
     "package": "argent_matter.gcyr.core.mixin",
-    "refmap": "gcyr.refmap.json",
-    "compatibilityLevel": "JAVA_17",
+    "compatibilityLevel": "JAVA_21",
     "plugin": "argent_matter.gcyr.core.GCYRMixinPlugin",
     "mixins": [
         "EntityMixin",

@@ -40,7 +40,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             loader_version      : libs.versions.loader.get(),
             minecraft_version   : libs.versions.minecraft.get(),
 
-            forge_version       : libs.versions.forge.range.get(),
+            neoforge_version    : libs.versions.neoForgeRange.get(),
             gtceu_version       : deps.versions.gtceu.range.get(),
             modularui_version   : deps.versions.modularui.range.get(),
             kubejs_version      : deps.versions.kubejs.range.get(),
@@ -58,7 +58,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 // this works with both building through Gradle and the IDE.
 sourceSets.main.resources.srcDir generateModMetadata
 // To avoid having to run "generateModMetadata" manually, make it run on every project reload
-legacyForge.ideSyncTask generateModMetadata
+neoForge.ideSyncTask generateModMetadata
 
 processResources {
     exclude ".cache"

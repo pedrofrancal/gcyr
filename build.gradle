@@ -1,6 +1,5 @@
 plugins {
     id 'idea'
-    id 'java'
     id 'java-library'
     id 'maven-publish'
 
@@ -13,12 +12,9 @@ group = project.properties.maven_group
 // Formats the mod version to include '-SNAPSHOT' if enabled.
 boolean isSnapshot = System.getenv("SNAPSHOT")
 version = "${mod_version}" + (isSnapshot ? "-SNAPSHOT" : "")
-boolean isCI = System.getenv("CI") != null
 
-allprojects {
-    java {
-        toolchain.languageVersion = JavaLanguageVersion.of(17)
-    }
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
 sourceSets {
@@ -26,71 +22,22 @@ sourceSets {
     main.resources {
         srcDir 'src/generated/resources'
     }
-
-    client {
-        compileClasspath += main.output
-        runtimeClasspath += main.output + main.runtimeClasspath
-    }
-
-    test {
-        compileClasspath += main.output
-        runtimeClasspath += main.output + main.runtimeClasspath
-    }
-
-    extra {
-        compileClasspath += main.output
-        runtimeClasspath += main.output + main.runtimeClasspath
-    }
-
-    clientExtra {
-        compileClasspath += client.output + extra.compileClasspath
-        runtimeClasspath += client.output + client.runtimeClasspath + extra.runtimeClasspath
-    }
 }
 
 configurations {
+    create "localRuntime", { canBeResolved = false }
     runtimeClasspath.extendsFrom localRuntime
-    extraRuntimeClasspath.extendsFrom extraLocalRuntime
-    clientRuntimeClasspath.extendsFrom clientLocalRuntime
-    extraClientRuntimeClasspath.extendsFrom clientExtraLocalRuntime
-
-    renderNurseCfg {
-        canBeConsumed = false
-    }
-
-    includedLibrary {
-        canBeConsumed = false
-        canBeResolved = true
-    }
 }
 
-afterEvaluate {
-    allprojects {
-        tasks.withType(JavaCompile).configureEach {
-            options.encoding = "UTF-8"
-            options.compilerArgs << "-Xlint:-removal"
-            options.compilerArgs << "-Aquiet=true" // Suppress mixin notes
-        }
-
-        lombok {
-            version = "1.18.38"
-        }
-    }
-
-    configurations {
-        // same as above but for the modRuntimeOnly configurations
-        modClientRuntimeOnly.canBeResolved = false
-        modExtraRuntimeOnly.canBeResolved = false
-        modClientExtraRuntimeOnly.canBeResolved = false
-    }
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+    options.compilerArgs << "-Xlint:-removal"
+    options.compilerArgs << "-Aquiet=true" // Suppress mixin notes
+    options.compilerArgs << "-Xmaxerrs" << "10000"
 }
 
-obfuscation {
-    createRemappingConfiguration(configurations.localRuntime)
-    createRemappingConfiguration(configurations.clientLocalRuntime)
-
-    createRemappingConfiguration(configurations.extraLocalRuntime)
-    createRemappingConfiguration(configurations.clientExtraLocalRuntime)
+lombok {
+    version = "1.18.38"
 }
 
 apply from: "$rootDir/gradle/scripts/jars.gradle"
