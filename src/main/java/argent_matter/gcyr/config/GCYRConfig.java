@@ -2,7 +2,7 @@ package argent_matter.gcyr.config;
 
 import argent_matter.gcyr.GCYR;
 
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import dev.toma.configuration.Configuration;
 import dev.toma.configuration.config.Config;

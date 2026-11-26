@@ -4,7 +4,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 
-import net.minecraftforge.common.world.BiomeSpecialEffectsBuilder;
+import net.neoforged.neoforge.common.world.BiomeSpecialEffectsBuilder;
 
 public class SpaceBiomes {
 

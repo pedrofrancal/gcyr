@@ -11,7 +11,7 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
-import net.minecraftforge.common.world.BiomeSpecialEffectsBuilder;
+import net.neoforged.neoforge.common.world.BiomeSpecialEffectsBuilder;
 
 public class MarsBiomes {
 

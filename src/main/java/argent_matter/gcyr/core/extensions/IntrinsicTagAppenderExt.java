@@ -4,7 +4,7 @@ import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 
-import net.minecraftforge.common.extensions.IForgeIntrinsicHolderTagAppender;
+import net.neoforged.neoforge.common.extensions.IForgeIntrinsicHolderTagAppender;
 
 import java.util.Collection;
 import java.util.function.Supplier;

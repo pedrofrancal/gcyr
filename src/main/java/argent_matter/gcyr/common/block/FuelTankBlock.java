@@ -5,7 +5,7 @@ import argent_matter.gcyr.api.block.IRocketPart;
 
 import net.minecraft.world.level.block.RotatedPillarBlock;
 
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import lombok.Getter;
 

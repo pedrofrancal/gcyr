@@ -4,7 +4,7 @@ import argent_matter.gcyr.common.data.item.GCYRItems;
 
 import net.minecraft.tags.ItemTags;
 
-import net.minecraftforge.common.Tags;
+import net.neoforged.neoforge.common.Tags;
 
 import com.tterrag.registrate.providers.RegistrateItemTagsProvider;
 

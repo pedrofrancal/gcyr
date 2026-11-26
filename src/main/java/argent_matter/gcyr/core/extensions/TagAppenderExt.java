@@ -4,7 +4,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 
-import net.minecraftforge.common.extensions.IForgeTagAppender;
+import net.neoforged.neoforge.common.extensions.IForgeTagAppender;
 
 import java.util.Collection;
 

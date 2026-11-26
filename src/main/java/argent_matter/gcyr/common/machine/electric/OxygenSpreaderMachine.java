@@ -11,7 +11,7 @@ import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.DustParticleOptions;
 
-import net.minecraftforge.fluids.FluidType;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import org.joml.Vector3f;
 
