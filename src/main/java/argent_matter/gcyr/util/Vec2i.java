@@ -1,6 +1,6 @@
 package argent_matter.gcyr.util;
 
-import com.gregtechceu.gtceu.api.codec.GTCodecUtils;
+import com.gregtechceu.gtceu.utils.codec.GTCodecUtils;
 
 import net.minecraft.Util;
 

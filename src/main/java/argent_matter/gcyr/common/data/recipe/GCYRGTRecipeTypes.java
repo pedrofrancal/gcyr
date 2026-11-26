@@ -1,46 +1,36 @@
 package argent_matter.gcyr.common.data.recipe;
 
-import argent_matter.gcyr.GCYR;
-import argent_matter.gcyr.api.gui.widget.GCYRGuiTextures;
+import argent_matter.gcyr.api.mui.drawable.GCYRGuiTextures;
 
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
-import com.gregtechceu.gtceu.api.gui.GuiTextures;
-import com.gregtechceu.gtceu.api.recipe.GTRecipeSerializer;
-import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
-import com.gregtechceu.gtceu.api.registry.GTRegistries;
+import com.gregtechceu.gtceu.api.recipe.gui.ProgressBarTextureSet;
+import com.gregtechceu.gtceu.api.registry.registrate.entry.GTRecipeTypeEntry;
 import com.gregtechceu.gtceu.common.data.GTSoundEntries;
+import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.crafting.RecipeType;
-
+import static argent_matter.gcyr.api.registries.GCYRRegistries.REGISTRATE;
 import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.ELECTRIC;
 import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.MULTIBLOCK;
-import static com.lowdragmc.lowdraglib.gui.texture.ProgressTexture.FillDirection.LEFT_TO_RIGHT;
 
 public class GCYRGTRecipeTypes {
 
-    public static final GTRecipeType OXYGEN_SPREADER_RECIPES = register("oxygen_spreader", ELECTRIC)
+    public static final GTRecipeTypeEntry OXYGEN_SPREADER_RECIPES = REGISTRATE.recipeType("oxygen_spreader", ELECTRIC)
             .setMaxIOSize(1, 0, 1, 0).setEUIO(IO.IN)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_MACERATE, LEFT_TO_RIGHT)
-            .setSound(GTSoundEntries.MOTOR);
+            .UI(builder -> builder.setProgressBar(GTGuiTextures.PROGRESS_MACERATE))
+            .setSound(GTSoundEntries.MOTOR)
+            .register();
 
-    public static final GTRecipeType DYSON_ENERGY_RECIPES = register("dyson_controller", MULTIBLOCK)
+    public static final GTRecipeTypeEntry DYSON_ENERGY_RECIPES = REGISTRATE.recipeType("dyson_controller", MULTIBLOCK)
             .setMaxIOSize(8, 0, 0, 0).setEUIO(IO.BOTH)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, LEFT_TO_RIGHT)
-            .setSound(GTSoundEntries.PORTABLE_SCANNER);
+            .UI(builder -> builder.setProgressBar(GTGuiTextures.PROGRESS_ARROW_MULTIPLE))
+            .setSound(GTSoundEntries.PORTABLE_SCANNER)
+            .register();
 
-    public static final GTRecipeType SPACE_ELEVATOR_RECIPES = register("space_elevator", MULTIBLOCK)
+    public static final GTRecipeTypeEntry SPACE_ELEVATOR_RECIPES = REGISTRATE.recipeType("space_elevator", MULTIBLOCK)
             .setMaxIOSize(16, 1, 4, 0).setEUIO(IO.IN)
-            .setProgressBar(GCYRGuiTextures.PROGRESS_BAR_ROCKET, LEFT_TO_RIGHT)
-            .setSound(GTSoundEntries.PORTABLE_SCANNER);
-
-    public static GTRecipeType register(String name, String group, RecipeType<?>... proxyRecipes) {
-        var recipeType = new GTRecipeType(GCYR.id(name), group, proxyRecipes);
-        GTRegistries.register(BuiltInRegistries.RECIPE_TYPE, recipeType.registryName, recipeType);
-        GTRegistries.register(BuiltInRegistries.RECIPE_SERIALIZER, recipeType.registryName, new GTRecipeSerializer());
-        GTRegistries.RECIPE_TYPES.register(recipeType.registryName, recipeType);
-        return recipeType;
-    }
+            .UI(builder -> builder.setProgressBar(new ProgressBarTextureSet(GCYRGuiTextures.PROGRESS_BAR_ROCKET)))
+            .setSound(GTSoundEntries.PORTABLE_SCANNER)
+            .register();
 
     public static void init() {}
 }

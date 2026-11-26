@@ -4,7 +4,7 @@ import argent_matter.gcyr.api.space.satellite.Satellite;
 import argent_matter.gcyr.api.space.satellite.SatelliteType;
 import argent_matter.gcyr.api.space.satellite.data.SatelliteData;
 
-import com.gregtechceu.gtceu.api.data.tag.TagUtil;
+import com.gregtechceu.gtceu.utils.TagUtil;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

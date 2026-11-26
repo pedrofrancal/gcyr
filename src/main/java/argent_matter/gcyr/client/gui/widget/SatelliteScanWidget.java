@@ -6,7 +6,7 @@ import argent_matter.gcyr.common.satellite.OreFinderSatellite;
 
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.item.ComponentItem;
-import com.gregtechceu.gtceu.common.item.ProspectorScannerBehavior;
+import com.gregtechceu.gtceu.common.item.behavior.ProspectorScannerBehavior;
 
 import com.lowdragmc.lowdraglib.gui.util.DrawerHelper;
 import com.lowdragmc.lowdraglib.gui.widget.*;

@@ -1,17 +1,14 @@
 package argent_matter.gcyr.common.data.client;
 
-import argent_matter.gcyr.GCYR;
-
-import com.gregtechceu.gtceu.api.registry.registrate.SoundEntryBuilder;
 import com.gregtechceu.gtceu.api.sound.SoundEntry;
+
+import net.neoforged.neoforge.registries.DeferredHolder;
+
+import static argent_matter.gcyr.api.registries.GCYRRegistries.REGISTRATE;
 
 public class GCYRSoundEntries {
 
-    public static final SoundEntry ROCKET = sound("rocket").build();
-
-    public static SoundEntryBuilder sound(String name) {
-        return new SoundEntryBuilder(GCYR.id(name));
-    }
+    public static final DeferredHolder<SoundEntry, SoundEntry> ROCKET = REGISTRATE.sound("rocket").register();
 
     public static void init() {}
 }

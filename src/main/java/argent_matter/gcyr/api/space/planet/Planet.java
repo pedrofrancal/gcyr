@@ -2,7 +2,7 @@ package argent_matter.gcyr.api.space.planet;
 
 import argent_matter.gcyr.data.loader.PlanetData;
 
-import com.gregtechceu.gtceu.api.codec.GTCodecUtils;
+import com.gregtechceu.gtceu.utils.codec.GTCodecUtils;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;

@@ -6,13 +6,15 @@ import argent_matter.gcyr.api.space.satellite.Satellite;
 import argent_matter.gcyr.api.space.satellite.SatelliteType;
 import argent_matter.gcyr.common.satellite.*;
 
-import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.RegisterEvent;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class GCYRSatellites {
 
-    static {
-        GCYRRegistries.SATELLITES.unfreeze();
-    }
+    private static final Map<String, SatelliteType<?>> TO_REGISTER = new LinkedHashMap<>();
 
     public static final SatelliteType<EmptySatellite> EMPTY = register("empty",
             new SatelliteType<>(EmptySatellite::new, EmptySatellite.CODEC));
@@ -26,12 +28,12 @@ public class GCYRSatellites {
             new SatelliteType<>(DysonSwarmSatellite::new, DysonSwarmSatellite.CODEC));
 
     public static <T extends Satellite> SatelliteType<T> register(String name, SatelliteType<T> satellite) {
-        ResourceLocation id = GCYR.id(name);
-        GCYRRegistries.SATELLITES.register(id, satellite);
+        TO_REGISTER.put(name, satellite);
         return satellite;
     }
 
-    public static void init() {
-        GCYRRegistries.SATELLITES.freeze();
+    public static void init(IEventBus modBus) {
+        modBus.addListener(RegisterEvent.class, event -> event.register(GCYRRegistries.Keys.SATELLITE,
+                helper -> TO_REGISTER.forEach((name, type) -> helper.register(GCYR.id(name), type))));
     }
 }

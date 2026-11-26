@@ -1,7 +1,8 @@
 package argent_matter.gcyr.common.data.dimension;
 
 import argent_matter.gcyr.GCYR;
-import argent_matter.gcyr.api.registries.GCYRRegistries;
+import com.gregtechceu.gtceu.api.registry.GTRegistries;
+import net.minecraft.core.Holder;
 
 import com.gregtechceu.gtceu.api.data.DimensionMarker;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
@@ -11,13 +12,13 @@ import net.minecraft.world.level.block.Block;
 
 import com.tterrag.registrate.util.entry.BlockEntry;
 
-import static com.gregtechceu.gtceu.common.data.GTDimensionMarkers.createAndRegister;
+import static argent_matter.gcyr.api.registries.GCYRRegistries.REGISTRATE;
 
 @SuppressWarnings("unused")
 public class GCYRDimensionMarkers {
 
     static {
-        GCYRRegistries.REGISTRATE.creativeModeTab(() -> null);
+        REGISTRATE.resetCreativeModeTab();
     }
 
     public static final BlockEntry<Block> LUNA_MARKER = createMarker("luna");
@@ -25,17 +26,17 @@ public class GCYRDimensionMarkers {
     public static final BlockEntry<Block> MERCURY_MARKER = createMarker("mercury");
     public static final BlockEntry<Block> VENUS_MARKER = createMarker("venus");
 
-    public static final DimensionMarker LUNA = createAndRegister(GCYR.id("luna"), 1,
-            () -> LUNA_MARKER, null);
-    public static final DimensionMarker MARS = createAndRegister(GCYR.id("mars"), 2,
-            () -> MARS_MARKER, null);
-    public static final DimensionMarker MERCURY = createAndRegister(GCYR.id("mercury"), 2,
-            () -> MERCURY_MARKER, null);
-    public static final DimensionMarker VENUS = createAndRegister(GCYR.id("venus"), 2,
-            () -> VENUS_MARKER, null);
+    public static final Holder<DimensionMarker> LUNA = REGISTRATE.simple("luna", GTRegistries.Keys.DIMENSION_MARKER,
+            () -> new DimensionMarker(1, () -> LUNA_MARKER, null));
+    public static final Holder<DimensionMarker> MARS = REGISTRATE.simple("mars", GTRegistries.Keys.DIMENSION_MARKER,
+            () -> new DimensionMarker(2, () -> MARS_MARKER, null));
+    public static final Holder<DimensionMarker> MERCURY = REGISTRATE.simple("mercury", GTRegistries.Keys.DIMENSION_MARKER,
+            () -> new DimensionMarker(2, () -> MERCURY_MARKER, null));
+    public static final Holder<DimensionMarker> VENUS = REGISTRATE.simple("venus", GTRegistries.Keys.DIMENSION_MARKER,
+            () -> new DimensionMarker(2, () -> VENUS_MARKER, null));
 
     private static BlockEntry<Block> createMarker(String name) {
-        return GCYRRegistries.REGISTRATE.block("%s_marker".formatted(name), Block::new)
+        return REGISTRATE.block("%s_marker".formatted(name), Block::new)
                 .lang(FormattingUtil.toEnglishName(name))
                 .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(),
                         prov.models().cube(ctx.getName(),

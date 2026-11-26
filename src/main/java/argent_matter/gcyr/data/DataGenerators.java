@@ -10,7 +10,7 @@ import argent_matter.gcyr.common.data.worldgen.feature.GCYRConfiguredFeatures;
 import argent_matter.gcyr.common.data.worldgen.feature.GCYRPlacedFeatures;
 import argent_matter.gcyr.data.tags.BiomeTagsLoader;
 
-import com.gregtechceu.gtceu.api.registry.registrate.SoundEntryBuilder;
+import com.gregtechceu.gtceu.api.registry.registrate.builder.SoundEntryBuilder;
 
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;

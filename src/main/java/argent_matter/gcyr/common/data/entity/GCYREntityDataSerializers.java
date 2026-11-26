@@ -1,15 +1,24 @@
 package argent_matter.gcyr.common.data.entity;
 
+import argent_matter.gcyr.GCYR;
 import argent_matter.gcyr.api.space.planet.Planet;
 import argent_matter.gcyr.data.loader.PlanetData;
 import argent_matter.gcyr.util.PosWithState;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
-import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,19 +26,27 @@ import java.util.Optional;
 
 public class GCYREntityDataSerializers {
 
-    public static final EntityDataSerializer<Long> LONG = EntityDataSerializer.simple(FriendlyByteBuf::writeVarLong,
-            FriendlyByteBuf::readVarLong);
+    private static final DeferredRegister<EntityDataSerializer<?>> SERIALIZERS = DeferredRegister
+            .create(NeoForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, GCYR.MOD_ID);
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, PosWithState> POS_WITH_STATE_CODEC = StreamCodec
+            .composite(
+                    BlockPos.STREAM_CODEC, PosWithState::pos,
+                    ByteBufCodecs.idMapper(Block.BLOCK_STATE_REGISTRY), PosWithState::state,
+                    ByteBufCodecs.optional(ByteBufCodecs.COMPOUND_TAG),
+                    p -> Optional.ofNullable(p.entityTag()),
+                    (pos, state, tag) -> new PosWithState(pos, state, tag.orElse(null)));
+
+    public static final EntityDataSerializer<Long> LONG = EntityDataSerializer.forValueType(ByteBufCodecs.VAR_LONG);
 
     public static final EntityDataSerializer<List<BlockPos>> BLOCK_POS_LIST = new EntityDataSerializer<>() {
 
-        @Override
-        public void write(FriendlyByteBuf buffer, List<BlockPos> value) {
-            buffer.writeCollection(value, EntityDataSerializers.BLOCK_POS::write);
-        }
+        private static final StreamCodec<RegistryFriendlyByteBuf, List<BlockPos>> CODEC = BlockPos.STREAM_CODEC
+                .apply(ByteBufCodecs.list()).cast();
 
         @Override
-        public List<BlockPos> read(FriendlyByteBuf buffer) {
-            return buffer.readList(EntityDataSerializers.BLOCK_POS::read);
+        public StreamCodec<? super RegistryFriendlyByteBuf, List<BlockPos>> codec() {
+            return CODEC;
         }
 
         @Override
@@ -41,44 +58,25 @@ public class GCYREntityDataSerializers {
     public static final EntityDataSerializer<PosWithState> POSITIONED_BLOCK_STATE = new EntityDataSerializer<>() {
 
         @Override
-        public void write(FriendlyByteBuf friendlyByteBuf, PosWithState posState) {
-            EntityDataSerializers.BLOCK_POS.write(friendlyByteBuf, posState.pos());
-            EntityDataSerializers.BLOCK_STATE.write(friendlyByteBuf, posState.state());
-            if (posState.entityTag() != null) {
-                friendlyByteBuf.writeBoolean(true);
-                EntityDataSerializers.COMPOUND_TAG.write(friendlyByteBuf, posState.entityTag());
-            } else {
-                friendlyByteBuf.writeBoolean(false);
-            }
-        }
-
-        @Override
-        public PosWithState read(FriendlyByteBuf friendlyByteBuf) {
-            BlockPos pos = EntityDataSerializers.BLOCK_POS.read(friendlyByteBuf);
-            BlockState state = EntityDataSerializers.BLOCK_STATE.read(friendlyByteBuf);
-            CompoundTag tag = null;
-            if (friendlyByteBuf.readBoolean()) {
-                tag = EntityDataSerializers.COMPOUND_TAG.read(friendlyByteBuf);
-            }
-            return new PosWithState(pos, state, tag);
+        public StreamCodec<? super RegistryFriendlyByteBuf, PosWithState> codec() {
+            return POS_WITH_STATE_CODEC;
         }
 
         @Override
         public PosWithState copy(PosWithState value) {
-            return new PosWithState(value.pos(), value.state(), value.entityTag());
+            return new PosWithState(value.pos(), value.state(),
+                    value.entityTag() == null ? null : value.entityTag().copy());
         }
     };
 
     public static final EntityDataSerializer<List<PosWithState>> POSITIONED_BLOCK_STATE_LIST = new EntityDataSerializer<>() {
 
-        @Override
-        public void write(FriendlyByteBuf buffer, List<PosWithState> value) {
-            buffer.writeCollection(value, POSITIONED_BLOCK_STATE::write);
-        }
+        private static final StreamCodec<RegistryFriendlyByteBuf, List<PosWithState>> CODEC = POS_WITH_STATE_CODEC
+                .apply(ByteBufCodecs.list());
 
         @Override
-        public List<PosWithState> read(FriendlyByteBuf buffer) {
-            return buffer.readList(POSITIONED_BLOCK_STATE::read);
+        public StreamCodec<? super RegistryFriendlyByteBuf, List<PosWithState>> codec() {
+            return CODEC;
         }
 
         @Override
@@ -87,30 +85,15 @@ public class GCYREntityDataSerializers {
         }
     };
 
-    public static final EntityDataSerializer<Optional<Planet>> PLANET = new EntityDataSerializer.ForValueType<>() {
+    public static final EntityDataSerializer<Optional<Planet>> PLANET = EntityDataSerializer.forValueType(
+            ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC.map(PlanetData::getPlanet, PlanetData::getPlanetId)));
 
-        @Override
-        public void write(FriendlyByteBuf buffer, Optional<Planet> value) {
-            if (value.isPresent()) {
-                buffer.writeBoolean(true);
-                buffer.writeResourceLocation(PlanetData.getPlanetId(value.get()));
-            } else {
-                buffer.writeBoolean(false);
-            }
-        }
-
-        @Override
-        public Optional<Planet> read(FriendlyByteBuf buffer) {
-            return buffer.readBoolean() ? Optional.of(PlanetData.getPlanet(buffer.readResourceLocation())) :
-                    Optional.empty();
-        }
-    };
-
-    public static void init() {
-        EntityDataSerializers.registerSerializer(LONG);
-        EntityDataSerializers.registerSerializer(BLOCK_POS_LIST);
-        EntityDataSerializers.registerSerializer(POSITIONED_BLOCK_STATE);
-        EntityDataSerializers.registerSerializer(POSITIONED_BLOCK_STATE_LIST);
-        EntityDataSerializers.registerSerializer(PLANET);
+    public static void register(IEventBus modBus) {
+        SERIALIZERS.register("long", () -> LONG);
+        SERIALIZERS.register("block_pos_list", () -> BLOCK_POS_LIST);
+        SERIALIZERS.register("positioned_block_state", () -> POSITIONED_BLOCK_STATE);
+        SERIALIZERS.register("positioned_block_state_list", () -> POSITIONED_BLOCK_STATE_LIST);
+        SERIALIZERS.register("planet", () -> PLANET);
+        SERIALIZERS.register(modBus);
     }
 }
